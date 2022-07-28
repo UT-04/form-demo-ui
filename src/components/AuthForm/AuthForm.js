@@ -1,4 +1,5 @@
 import React from 'react';
+import Container from 'react-bootstrap/Container';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import styles from './AuthForm.module.css';
@@ -8,19 +9,22 @@ import TalentSignupForm from '../TalentSignupForm/TalentSignupForm';
 const AuthForm = () => {
     return (
         <React.Fragment>
-            <Tabs
-                defaultActiveKey="fanSignup"
-                id="uncontrolled-tab-example"
-                className={["mb-3", styles.container].join(" ")}
-                variant='pills'
-            >
-                <Tab eventKey="fanSignup" title="Fan Signup">
-                    <FanSignupForm />
-                </Tab>
-                <Tab eventKey="talentSignup" title="Talent Signup">
-                    <TalentSignupForm />
-                </Tab>
-            </Tabs>
+            <Container className={["my-5 justify-content-center", styles.container]} fluid="md">
+                <Tabs
+                    justify
+                    defaultActiveKey="fanSignup"
+                    id="uncontrolled-tab-example"
+                    className={["mb-3", "justify-content-center", styles.tabs].join(" ")}
+                    variant='pills'
+                >
+                    <Tab eventKey="fanSignup" title="Fan" tabClassName={styles.tab}>
+                        <FanSignupForm />
+                    </Tab>
+                    <Tab eventKey="talentSignup" title="Talent" tabClassName={styles.tab}>
+                        <TalentSignupForm />
+                    </Tab>
+                </Tabs>
+            </Container>
         </React.Fragment>
     );
 };
