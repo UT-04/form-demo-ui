@@ -5,6 +5,7 @@ import Container from 'react-bootstrap/Container';
 import { useForm } from '../../hooks/FormHook';
 import Input from '../Input/Input';
 import { VALIDATOR_EMAIL, VALIDATOR_MINLENGTH, VALIDATOR_REQUIRE } from '../../util/validators';
+import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 
 const FormComponent = (props) => {
     const formObj = {
@@ -72,7 +73,7 @@ const FormComponent = (props) => {
         }
     };
 
-    const [agreeToTermsAndConditions, setAgreeToTermsAndConditions] = useState(true);
+    const [agreeToTermsAndConditions, setAgreeToTermsAndConditions] = useState(false);
 
     const formStateObj = {};
     for (const key in formObj) {
@@ -87,35 +88,44 @@ const FormComponent = (props) => {
 
     const [formState, inputHandler] = useForm(formStateObj, props.initialValid);
     return (
-        <Container>
-            <Form
-                className="w-75 mx-auto"
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    console.log(formState.inputs);
-                }}>
-                {Object.values(formObj).map(inp => {
+        <React.Fragment>
+            <Container>
+                <Form
+                    className="w-75 mx-auto"
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        props.onFormSubmit({
+                            first_name: formState.inputs.first_name.value,
+                            last_name: formState.inputs.last_name.value,
+                            username: formState.inputs.username.value,
+                            email: formState.inputs.email.value,
+                            password: formState.inputs.password.value,
+                        })
+                    }}>
+                    {Object.values(formObj).map(inp => {
+                        return <Input
+                            key={inp.props.id}
+                            {...inp.props}
+                            initialValue={inp.formState ? inp.formState.value : props.value}
+                            initialValid={inp.formState ? inp.formState.isValid : props.valid}
+                            onInput={inp.formState ? inputHandler : null} />
+                    })}
 
-                    return <Input
-                        key={inp.props.id}
-                        {...inp.props}
-                        initialValue={inp.formState ? inp.formState.value : props.value}
-                        initialValid={inp.formState ? inp.formState.isValid : props.valid}
-                        onInput={inp.formState ? inputHandler : null} />
-                })}
+                    <Form.Check
+                        type="checkbox"
+                        checked={agreeToTermsAndConditions}
+                        label={<span>I agree to the <span className="text-primary fw-bold">Terms and Conditions</span>.</span>}
+                        onChange={(e) => setAgreeToTermsAndConditions(e.target.checked)} />
 
-                <Form.Check
-                    type="checkbox"
-                    value={agreeToTermsAndConditions}
-                    label={<span>I agree to the <span className="text-primary fw-bold">Terms and Conditions</span>.</span>}
-                    onClick={(e) => setAgreeToTermsAndConditions(e.target.checked)} />
-
-                <Button
-                    type="submit"
-                    className="mt-3"
-                    disabled={!formState.isValid || !agreeToTermsAndConditions}>Sign Up</Button>
-            </Form>
-        </Container>
+                    <Button
+                        type="submit"
+                        className="mt-3"
+                        disabled={!formState.isValid || !agreeToTermsAndConditions || props.isLoading}>
+                        {props.isLoading && <LoadingSpinner />}
+                        Sign Up</Button>
+                </Form>
+            </Container>
+        </React.Fragment>
     );
 };
 
